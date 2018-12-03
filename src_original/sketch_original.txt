@@ -1,5 +1,7 @@
 /*
 
+Damped Sine Wave 3D
+
 Source code from https://www.openprocessing.org/sketch/157133
 written in Processing by Marvin K, marvk.net
 https://www.openprocessing.org/user/41086

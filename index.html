@@ -2,7 +2,8 @@
 
 <!--
 
-P5 summitive demonstration page by ------------.
+Damped Sine Wave 3D Demo Page
+by ------------.
 
 03/12/2018
 
@@ -13,6 +14,30 @@ P5 summitive demonstration page by ------------.
 	<title>P5 Demo</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
 	<script src="sketch.js"></script>
+	<script type='text/javascript'>
+"use strict";
+
+var dsw;
+
+function setup() {
+    createCanvas(800, 800, WEBGL);
+    background(255);
+    noStroke();
+	
+	dsw = new DampedSinWave(1/500, 5, 100, cos, function(d) { return 10 / d; });
+}
+
+function draw() {
+	background(200);
+	camera(width/2, height-100, 200, width/2, height/2, 0, 0, 1, 0);
+	translate(width/2, height/2, 0);
+	rotateX((mouseY/height));
+	rotateZ(TWO_PI-((mouseX/width)*TWO_PI+PI));
+	
+	dsw.draw();
+}
+
+	</script>
 </head>
 <body>
 </body>

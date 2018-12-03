@@ -1,5 +1,7 @@
 /*
 
+Damped Sine Wave 3D
+
 Code originally by Marvin K, marvk.net
 https://www.openprocessing.org/user/41086
 Adapted for a programming assignment by ------------.
@@ -9,64 +11,59 @@ Converted from Processing to P5
 
 */
 
-let l = 0;
-let n = 0;
-let t = 0.0;
+"use strict";
 
-let points = [];
+class DampedSinWave {
+	constructor(speed = 1/500, spacing = 6, n = 51, f=sin, d_multiplier_function=function(dist) { return exp(-dist/50) }) {
+		// Oscillation speed
+		this.speed = speed;
+		// Spacing between points
+		this.l = spacing;
+		// Number of points
+		this.n = n;
+		// Oscillation function
+		this.f = f;
+		// Distance multiplier function
+		this.d_multiplier_function = d_multiplier_function;
+		
+		this.t = 0.0;
+		this.points = [];
+	}
+	
+	draw() {
+		this.t = this.speed * millis();
 
-function setup() {
-    createCanvas(800, 800, WEBGL);
-    background(255);
+		this.points = [];
 
-    noStroke();
+		for (let i = 0; i < this.n; i++) {
+			for (let j = 0; j < this.n; j++) {
+				let x2 = (this.l*i+this.l/2-this.l*this.n/2);
+				let y2 = (this.l*j+this.l/2-this.l*this.n/2);
 
-    l = 6; //Spacing between points
-    n = 51; //Number of points
-}
+				let distance = dist(0, 0, x2, y2);
+				let z = this.d_multiplier_function(distance)*this.f(((distance)/10)-this.t)*25;
 
-function draw() {
-    t = millis()/500;
+				this.points.push(createVector(x2, y2, z));
+			}
+		}
 
-    background(200);
+		noFill();
+		stroke(100);
 
-    camera(width/2, height-100, 200, width/2, height/2, 0, 0, 1, 0);
-    //lights();
+		for (let i = 0; i < this.n-1; i++) {
+			beginShape(QUAD_STRIP);
+			let v = createVector(0, 0, 0);
+			for (let j = 0; j < this.n-1; j++) {
+				v = this.points[j+this.n*i];
+	            stroke(127+v.z*10, 127+v.z*5, 127);
+				vertex(v.x, v.y, v.z);
+				v = this.points[j+this.n*(i+1)];
+				vertex(v.x, v.y, v.z);
+			}
+			endShape();
+		}
 
-    points = [];
-
-    translate(width/2, height/2, 0);
-    rotateX((mouseY/height));
-    rotateZ(TWO_PI-((mouseX/width)*TWO_PI+PI));
-
-    for (let i = 0; i < n; i++) {
-        for (let j = 0; j < n; j++) {
-            let x2 = (l*i+l/2-l*n/2);
-            let y2 = (l*j+l/2-l*n/2);
-
-            let distance = dist(0, 0, x2, y2);
-            let z = exp(-distance/50)*sin(((distance)/10)-t)*25;
-
-            points.push(createVector(x2, y2, z));
-        }
-    }
-
-    noFill();
-    stroke(100);
-
-    for (let i = 0; i < n-1; i++) {
-        beginShape(QUAD_STRIP);
-        let v = createVector(0, 0, 0);
-        for (let j = 0; j < n-1; j++) {
-            v = points[j+n*i];
-/           stroke(127+v.z*10, 127+v.z*5, 127);
-            vertex(v.x, v.y, v.z);
-            v = points[j+n*(i+1)];
-            vertex(v.x, v.y, v.z);
-        }
-        endShape();
-    }
-
-    fill(255, 0, 0);
-    noStroke();
+		fill(255, 0, 0);
+		noStroke();
+	}
 }

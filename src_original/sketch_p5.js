@@ -1,5 +1,7 @@
 /*
 
+Damped Sine Wave 3D
+
 Code originally by Marvin K, marvk.net
 https://www.openprocessing.org/user/41086
 Adapted for a programming assignment by ------------.
