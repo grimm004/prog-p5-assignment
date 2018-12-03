@@ -10,6 +10,7 @@ by ------------.
 -->
 
 <html>
+
 <head>
 	<title>P5 Demo</title>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
@@ -20,25 +21,50 @@ by ------------.
 var dsw;
 
 function setup() {
-    createCanvas(800, 800, WEBGL);
+    let canvas = createCanvas(windowWidth, windowHeight - 50, WEBGL);
+	canvas.parent('wavedemo');
     background(255);
     noStroke();
 	
-	dsw = new DampedSinWave(1/500, 5, 100, cos, function(d) { return 10 / d; });
+	dsw = new DampedSinWave(1/500, 5, 100, cos, function(d) { return exp(-d/100); });
+	dsw.speed = 1/500;
 }
 
 function draw() {
 	background(200);
 	camera(width/2, height-100, 200, width/2, height/2, 0, 0, 1, 0);
 	translate(width/2, height/2, 0);
-	rotateX((mouseY/height));
-	rotateZ(TWO_PI-((mouseX/width)*TWO_PI+PI));
+	
+	if (!mouseIsPressed)
+	{
+		rotateX((mouseY/height));
+		rotateZ(TWO_PI-((mouseX/width)*TWO_PI+PI));
+	}
 	
 	dsw.draw();
 }
 
+function useSin() {
+	dsw.f = sin;
+}
+
+function useCos() {
+	dsw.f = cos;
+}
+
+function changeSpeed(value) {
+	dsw.speed = 1/value;
+}
+
 	</script>
 </head>
+
 <body>
+	<p>Damped Sine Wave 3D Demo</p>
+	<div id='wavedemo'/>
+	<button onclick="useSin()">Use Sin</button>
+	<button onclick="useCos()">Use Cos</button>
+	<input type="range" min="100" max="1000" value="500" oninput="changeSpeed(this.value)">
 </body>
+
 </html>
