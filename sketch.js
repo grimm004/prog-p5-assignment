@@ -13,8 +13,8 @@ Converted from Processing to P5
 
 "use strict";
 
-class DampedSinWave {
-	constructor(speed = 1/500, spacing = 6, n = 51, f=sin, d_multiplier_function=function(dist) { return exp(-dist/50) }) {
+class DampedOscillation {
+	constructor(speed = 1/500, spacing = 6, n = 51, oscillationFunction=sin, damperFunction=function(dist) { return exp(-dist/50) }) {
 		// Oscillation speed
 		this.speed = speed;
 		// Spacing between points
@@ -22,12 +22,36 @@ class DampedSinWave {
 		// Number of points
 		this.n = n;
 		// Oscillation function
-		this.f = f;
+		this.oscillationFunction = oscillationFunction;
 		// Distance multiplier function
-		this.d_multiplier_function = d_multiplier_function;
+		this.damperFunction = damperFunction;
 		
 		this.t = 0.0;
 		this.points = [];
+	}
+	
+	getOscillation() {
+		return this.oscillationFunction;
+	}
+	
+	setOscillation(f) {
+		this.oscillationFunction = f;
+	}
+	
+	getDamper() {
+		return this.damperFunction;
+	}
+	
+	setDamper(f) {
+		this.damperFunction = f;
+	}
+	
+	getSpeed() {
+		return this.speed;
+	}
+	
+	setSpeed(speed) {
+		this.speed = speed;
 	}
 	
 	draw() {
@@ -41,7 +65,7 @@ class DampedSinWave {
 				let y2 = (this.l*j+this.l/2-this.l*this.n/2);
 
 				let distance = dist(0, 0, x2, y2);
-				let z = this.d_multiplier_function(distance)*this.f(((distance)/10)-this.t)*25;
+				let z = this.damperFunction(distance)*this.oscillationFunction(((distance)/10)-this.t)*25;
 
 				this.points.push(createVector(x2, y2, z));
 			}

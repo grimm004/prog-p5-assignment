@@ -2,7 +2,7 @@
 
 <!--
 
-Damped Sine Wave 3D Demo Page
+Damped Wave 3D Demo Page
 by ------------.
 
 03/12/2018
@@ -13,47 +13,48 @@ by ------------.
 
 <head>
 	<title>P5 Demo</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
 	<script src="sketch.js"></script>
 	<script type='text/javascript'>
 "use strict";
 
-var dsw;
+var dw0, dw1;
+var fSwitch = false;
 
 function setup() {
-    let canvas = createCanvas(windowWidth, windowHeight - 50, WEBGL);
+    let canvas = createCanvas(windowWidth, windowHeight - 100, WEBGL);
 	canvas.parent('wavedemo');
     background(255);
     noStroke();
 	
-	dsw = new DampedSinWave(1/500, 5, 100, cos, function(d) { return exp(-d/100); });
-	dsw.speed = 1/500;
+	dw0 = new DampedOscillation();
+	dw1 = new DampedOscillation();
+	
+	var fov = 60 / 180 * PI;
+	var cameraZ = height / 2.0 / tan(fov / 2.0);
+	perspective(fov, width / height, cameraZ * 0.1, cameraZ * 10);
 }
 
 function draw() {
 	background(200);
-	camera(width/2, height-100, 200, width/2, height/2, 0, 0, 1, 0);
-	translate(width/2, height/2, 0);
+	orbitControl();
 	
-	if (!mouseIsPressed)
-	{
-		rotateX((mouseY/height));
-		rotateZ(TWO_PI-((mouseX/width)*TWO_PI+PI));
-	}
+	dw0.draw();
 	
-	dsw.draw();
-}
-
-function useSin() {
-	dsw.f = sin;
-}
-
-function useCos() {
-	dsw.f = cos;
+	translate(width/4, 0, 0);
+	dw1.draw();
 }
 
 function changeSpeed(value) {
-	dsw.speed = 1/value;
+	dw0.setSpeed(1/value);
+	dw1.setSpeed(1/value);
+}
+
+function toggleOscillation() {
+	fSwitch ^= true;
+	dw0.setOscillation(fSwitch ? cos : sin);
+	dw1.setOscillation(fSwitch ? sin : cos);
 }
 
 	</script>
@@ -61,10 +62,9 @@ function changeSpeed(value) {
 
 <body>
 	<p>Damped Sine Wave 3D Demo</p>
-	<div id='wavedemo'/>
-	<button onclick="useSin()">Use Sin</button>
-	<button onclick="useCos()">Use Cos</button>
+	<button onclick="toggleOscillation()">Toggle Oscillation</button>
 	<input type="range" min="100" max="1000" value="500" oninput="changeSpeed(this.value)">
+	<div id='wavedemo'/>
 </body>
 
 </html>
