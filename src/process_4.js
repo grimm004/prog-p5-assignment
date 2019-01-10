@@ -49,7 +49,7 @@ function init() {
     for (var  i = 0; i < tot; i++) {
         var s = int(random(0, 2));
         var col = color(182 * s, 103 * s, 13 * s, 2); //Randomly choose between black and (182, 103, 13), with alpha equal to 2;
-        elements.push( new Element(random(width),height/2, random(40, 60), col));
+        elements.push(new Element(random(width), height / 2, random(40, 60), col));
     }
 }
 
