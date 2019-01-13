@@ -7,50 +7,60 @@
   https://www.openprocessing.org/sketch/402537
 */
 
-var elements = [];
-var tot = 80;
+class Process4 {
+    constructor(x, y, width, height, tot = 160) {
+        this.elements = [];
+        this.tot = tot;
+    }
+    
+    init() {
+        // Distribute the Elements randomly on a line ;
+        this.elements = [];
+
+        for (var  i = 0; i < this.tot; i++) {
+            var s = int(random(0, 2));
+            var col = color(182 * s, 103 * s, 13 * s, 2); //Randomly choose between black and (182, 103, 13), with alpha equal to 2;
+            this.elements.push(new Element(random(width), height / 2, random(40, 60), col));
+        }
+    }
+
+    draw() {
+        for (var i = 0 ; i < this.elements.length; i++) {
+            var el = this.elements[i];
+
+            el.move();
+            // el.show();
+            el.bounce();
+        }
+
+        // Checking overlaps
+        for (var i = 0; i < this.elements.length; i++) {
+            var el = this.elements[i];
+            for (var j = i + 1; j < this.elements.length; j++) {
+                var el2 = this.elements[j];
+                el.onOverlap(el2);
+            }
+        }
+    }
+}
+
+
+var p4 = new Process4();
 
 function setup() {
-    createCanvas(1290, 760);
-    init();
+    createCanvas(1920, 1080);
+    background(255);
+    p4.init();
+}
+
+function mousePressed() {
+    p4.init();
 }
 
 function draw() {
     //Do not clear the screen;
     // background(255);
-  
-    for (var i = 0 ; i < elements.length; i++) {
-        var el = elements[i];
-
-        el.move();
-        //  el.show();
-        el.bounce();
-    }
-
-    // Checking overlaps
-    for (var i = 0; i < elements.length; i++) {
-        var el = elements[i];
-        for (var j = i + 1; j < elements.length; j++) {
-            var el2 = elements[j];
-            el.onOverlap(el2);
-        }
-    }
-}
-
-function mousePressed() {
-    init();
-}
-
-function init() {
-    background(255);
-    // Distribute the Elements randomly on a line ;
-    elements = [];
-
-    for (var  i = 0; i < tot; i++) {
-        var s = int(random(0, 2));
-        var col = color(182 * s, 103 * s, 13 * s, 2); //Randomly choose between black and (182, 103, 13), with alpha equal to 2;
-        elements.push(new Element(random(width), height / 2, random(40, 60), col));
-    }
+    p4.draw();
 }
 
 // Define the Element1 class
