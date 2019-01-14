@@ -8,9 +8,15 @@
 */
 
 class Process4 {
-    constructor(x, y, width, height, tot = 160) {
+    constructor(x, y, width, height, col = color(182, 103, 13, 2), tot = 160) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.col = col; // Maximum colour of lines
+        this.tot = tot; // Number of elements
+        
         this.elements = [];
-        this.tot = tot;
     }
     
     init() {
@@ -19,17 +25,16 @@ class Process4 {
 
         for (var  i = 0; i < this.tot; i++) {
             var s = int(random(0, 2));
-            var col = color(182 * s, 103 * s, 13 * s, 2); //Randomly choose between black and (182, 103, 13), with alpha equal to 2;
-            this.elements.push(new Element(random(width), height / 2, random(40, 60), col));
+            var col = color(this.col.levels[0] * s, this.col.levels[1] * s, this.col.levels[2] * s, this.col.levels[3]); //Randomly choose between black and input colour, with alpha equal to 2;
+            this.elements.push(new Element(this.x + random(this.width), this.y + (this.height / 2), random(40, 60), col, this.x + this.width, this.y + this.height));
         }
     }
 
-    draw() {
+    draw(renderer = null) {
         for (var i = 0 ; i < this.elements.length; i++) {
             var el = this.elements[i];
 
             el.move();
-            // el.show();
             el.bounce();
         }
 
@@ -38,44 +43,43 @@ class Process4 {
             var el = this.elements[i];
             for (var j = i + 1; j < this.elements.length; j++) {
                 var el2 = this.elements[j];
-                el.onOverlap(el2);
+                el.onOverlap(el2, renderer);
             }
         }
     }
 }
 
 
-var p4 = new Process4();
+var p4, renderer;
 
 function setup() {
-    createCanvas(1920, 1080);
+    renderer = createCanvas(1920, 1080);
     background(255);
-    p4.init();
-}
-
-function mousePressed() {
+    p4 = new Process4(100, 100, width, height);
     p4.init();
 }
 
 function draw() {
     //Do not clear the screen;
     // background(255);
-    p4.draw();
+    p4.draw(renderer);
 }
 
 // Define the Element1 class
-function Element(x, y, rad, col) {
+function Element(x, y, rad, col, maxX, maxY) {
     var pos;
     var vel;
     var dir;
     var r;
     var color;
 
-    this.pos = new p5.Vector(x, y);
-    this.vel = new p5.Vector(random(-1, 1), random(-1, 1));
+    this.pos = createVector(x, y);
+    this.vel = createVector(random(-1, 1), random(-1, 1));
     this.dir = this.vel.copy();
     this.r = rad;
     this.color = col;
+    
+    this.bounds = createVector(maxX, maxY);
 
     // Define movement: every Element moves on a straight line;
     this.move = function() {
@@ -90,7 +94,7 @@ function Element(x, y, rad, col) {
     }
 
     //Define behaviour when the circles overlap
-    this.onOverlap = function(other) {
+    this.onOverlap = function(other, renderer) {
         var d = (this.pos.x - other.pos.x) * (this.pos.x - other.pos.x) + (this.pos.y - other.pos.y) * (this.pos.y - other.pos.y); 
 
         //If touching, we change their direction
@@ -111,16 +115,18 @@ function Element(x, y, rad, col) {
             other.dir = this.dir.copy();
             other.dir.mult(-1);
 
-            this.visualize(other, d);
+            this.visualize(other, d, renderer);
         }
     }
 
+    /*
     //Use this for debugging purpouses;
     this.show = function() {
         stroke(0,  255);
         ellipse(this.pos.x, this.pos.y, this.r * 2, this.r * 2);
         line(this.pos.x + this.dir.x * this.r, this.pos.y + this.dir.y * this.r, this.pos.x, this.pos.y);
     }
+    */
 
     // Check if the Element touches the edges, in which case it bounces back;
     this.bounce = function() {
@@ -129,8 +135,8 @@ function Element(x, y, rad, col) {
             this.vel.x = -this.vel.x;
         }
 
-        if (this.pos.x > width - this.r) {
-            this.pos.x = width - this.r;
+        if (this.pos.x > this.bounds.x - this.r) {
+            this.pos.x = this.bounds.x - this.r;
             this.vel.x = -this.vel.x;
         }
 
@@ -139,8 +145,8 @@ function Element(x, y, rad, col) {
             this.vel.y = -this.vel.y;
         }
 
-        if (this.pos.y > height - this.r) {
-            this.pos.y = height - this.r;
+        if (this.pos.y > this.bounds.y - this.r) {
+            this.pos.y = this.bounds.y - this.r;
             this.vel.y = -this.vel.y;
         }
     }
@@ -148,11 +154,18 @@ function Element(x, y, rad, col) {
     /*Define visualization: draw a line between the centers when they overlap; the distance between
     the centers controls the thickness of the line;
     */
-    this.visualize = function(other, d) {
+    this.visualize = function(other, d, renderer) {
         var c = map(d, 0, (this.r + other.r) * (this.r + other.r), 1, 0.5);
         noFill();
-        strokeWeight(c * 2);
-        stroke(lerpColor(this.color, other.color, 0.5));
-        line(this.pos.x, this.pos.y, other.pos.x, other.pos.y);
+        if (renderer) {
+            renderer.strokeWeight(c * 2);
+            renderer.stroke(lerpColor(this.color, other.color, 0.5));
+            renderer.line(this.pos.x, this.pos.y, other.pos.x, other.pos.y);
+        }
+        else {
+            strokeWeight(c * 2);
+            stroke(lerpColor(this.color, other.color, 0.5));
+            line(this.pos.x, this.pos.y, other.pos.x, other.pos.y);
+        }
     }
 }
