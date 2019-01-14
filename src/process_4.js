@@ -1,10 +1,13 @@
-/* Process4.reload() - Alessandro Valentino 2017
-  Inspired by Process 4 by Casey Reas ( http://reas.com/compendium_text/ );
-  The main modification is in the visualization:the distance
-  between the centers controls the thickness of the line which is drawn, with color given by interpolating the
-  colors of the two circles overlapping;
-  
-  https://www.openprocessing.org/sketch/402537
+/*
+
+Process4.reload() - Alessandro Valentino 2017
+Inspired by Process 4 by Casey Reas ( http://reas.com/compendium_text/ );
+The main modification is in the visualization:the distance
+between the centers controls the thickness of the line which is drawn, with color given by interpolating the
+colors of the two circles overlapping;
+
+Sketh from https://www.openprocessing.org/sketch/402537
+
 */
 
 class Process4 {
@@ -17,6 +20,40 @@ class Process4 {
         this.tot = tot; // Number of elements
         
         this.elements = [];
+        
+        this.init();
+    }
+    
+    getX() {
+        return this.x;
+    }
+    
+    setX(x) {
+        this.x = x;
+    }
+    
+    getY() {
+        return this.y;
+    }
+    
+    setY(y) {
+        this.y = y;
+    }
+    
+    getWidth() {
+        return this.width;
+    }
+    
+    setWidth(width) {
+        this.width = width;
+    }
+    
+    getHeight() {
+        return this.height;
+    }
+    
+    setHeight(height) {
+        this.height = height;
     }
     
     init() {
@@ -56,7 +93,6 @@ function setup() {
     renderer = createCanvas(1920, 1080);
     background(255);
     p4 = new Process4(100, 100, width, height);
-    p4.init();
 }
 
 function draw() {

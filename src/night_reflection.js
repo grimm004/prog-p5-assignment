@@ -1,6 +1,12 @@
 /*
-  https://www.openprocessing.org/sketch/623979
+
+Night Reflection by Pierre MARZIN
+
+Sketch from https://www.openprocessing.org/sketch/623979
+
 */
+
+"use strict";
 
 // Shader Definitions
 const frag = `
@@ -99,35 +105,54 @@ void main() {
 
 `;
 
-var gl, noctaves, c;
-function setup() {
-    createCanvas(windowWidth, windowHeight,WEBGL);
-    gl = this.canvas.getContext('webgl');
-    gl.disable(gl.DEPTH_TEST);
-    noctaves = 4;
-    c = [];
-    initc();
-    test = new p5.Shader(this._renderer, vert, frag); // shaders are loaded
-    shader(test); // shaders are applied
-}
 
-function initc() {
-    for (var i = 0; i < 22; i++) {
-        c[i] = random(-5, 5);
+class NightReflection {
+    constructor(noctaves = 4, renderer = null) {
+        this.noctaves = noctaves;
+        this.c = [];
+        
+        if (renderer) {
+            this.shader_ = new p5.Shader(renderer, vert, frag); // shaders are loaded
+            renderer.shader(this.shader_); // shaders are applied
+        }
+        else {
+            this.shader_ = new p5.Shader(this._renderer, vert, frag); // shaders are loaded
+            shader(this.shader_); // shaders are applied
+        }
+        
+        this.initc();
+    }
+
+    initc() {
+        for (var i = 0; i < 22; i++) {
+            this.c[i] = random(-5, 5);
+        }
+    }
+    
+    draw(renderer = null) {
+        this.shader_.setUniform("iResolution", [width, height]); //pass some values to the shader
+        this.shader_.setUniform("iTime", millis() * .001);
+        this.shader_.setUniform('iMouse', [mouseX, mouseY]);
+        this.shader_.setUniform("noctaves", this.noctaves);
+        this.shader_.setUniform("c", this.c);
+        
+        if (renderer) {
+            renderer.shader(this.shader_);
+            renderer.box(width / 2);
+        }
+        else {
+            shader(this.shader_);
+            box(width / 2);
+        }
     }
 }
 
-function draw() {    
-    test.setUniform("iResolution", [width, height]); //pass some values to the shader
-    test.setUniform("iTime", millis() * .001);
-    test.setUniform('iMouse', [mouseX, mouseY]);
-    test.setUniform("noctaves", noctaves);
-    test.setUniform("c", c);
-    shader(test);
-    box(width / 2);
+var nr;
+function setup() {
+    createCanvas(windowWidth, windowHeight, WEBGL);
+    nr = new NightReflection();
 }
 
-function mouseReleased() {
-    noctaves = (noctaves == 5) ? 4 : noctaves + 1;
-    if (noctaves == 4) initc();
+function draw() {
+    nr.draw();
 }
