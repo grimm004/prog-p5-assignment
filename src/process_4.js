@@ -86,7 +86,7 @@ class Process4 {
     }
 }
 
-
+/*
 var p4, renderer;
 
 function setup() {
@@ -100,6 +100,7 @@ function draw() {
     // background(255);
     p4.draw(renderer);
 }
+*/
 
 // Define the Element1 class
 function Element(x, y, rad, col, maxX, maxY) {
@@ -127,7 +128,7 @@ function Element(x, y, rad, col, maxX, maxY) {
         this.vel.mult(mag); //Each element will move with the same initial velocity;
 
         this.pos.add(this.vel);
-    }
+    };
 
     //Define behaviour when the circles overlap
     this.onOverlap = function(other, renderer) {
@@ -136,8 +137,8 @@ function Element(x, y, rad, col, maxX, maxY) {
         //If touching, we change their direction
         
         if (d == (this.r + other.r) * (this.r + other.r)) {
-          this.dir.rotate(0.01 * 2 * PI);
-          other.dir.rotate(0.01 * 2 * PI);
+            this.dir.rotate(0.01 * 2 * PI);
+            other.dir.rotate(0.01 * 2 * PI);
         }
         
         // If overlapping, they will move away from their centers;
@@ -153,7 +154,7 @@ function Element(x, y, rad, col, maxX, maxY) {
 
             this.visualize(other, d, renderer);
         }
-    }
+    };
 
     /*
     //Use this for debugging purpouses;
@@ -185,7 +186,7 @@ function Element(x, y, rad, col, maxX, maxY) {
             this.pos.y = this.bounds.y - this.r;
             this.vel.y = -this.vel.y;
         }
-    }
+    };
 
     /*Define visualization: draw a line between the centers when they overlap; the distance between
     the centers controls the thickness of the line;
@@ -203,5 +204,5 @@ function Element(x, y, rad, col, maxX, maxY) {
             stroke(lerpColor(this.color, other.color, 0.5));
             line(this.pos.x, this.pos.y, other.pos.x, other.pos.y);
         }
-    }
+    };
 }

@@ -132,7 +132,7 @@ class NightReflection {
     draw(renderer = null) {
         this.shader_.setUniform("iResolution", [width, height]); //pass some values to the shader
         this.shader_.setUniform("iTime", millis() * .001);
-        this.shader_.setUniform('iMouse', [mouseX, mouseY]);
+        this.shader_.setUniform("iMouse", [mouseX, mouseY]);
         this.shader_.setUniform("noctaves", this.noctaves);
         this.shader_.setUniform("c", this.c);
         
@@ -147,9 +147,12 @@ class NightReflection {
     }
 }
 
+
 var nr;
 function setup() {
-    createCanvas(windowWidth, windowHeight, WEBGL);
+    var renderer = createCanvas(500, 500, WEBGL);
+    background(255);
+    noStroke();
     nr = new NightReflection();
 }
 
