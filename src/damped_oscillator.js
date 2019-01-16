@@ -13,6 +13,7 @@ Converted from Processing to P5
 
 "use strict";
 
+// The main DampedOscillation class
 class DampedOscillation {
     constructor(speed = 1/500, spacing = 6, n = 51, oscillationFunction=sin, damperFunction=function(dist) { return exp(-dist/50); }) {
         // Oscillation speed
@@ -26,41 +27,51 @@ class DampedOscillation {
         // Distance multiplier function
         this.damperFunction = damperFunction;
         
+		// Private fields (for time and point storage)
         this.t = 0.0;
         this.points = [];
     }
     
+	// Returns the oscillation function
     getOscillation() {
         return this.oscillationFunction;
     }
-    
+
+	// Sets the oscillation function
     setOscillation(f) {
         this.oscillationFunction = f;
     }
     
+	// Gets the damper function
     getDamper() {
         return this.damperFunction;
     }
     
+	// Sets the damper function
     setDamper(f) {
         this.damperFunction = f;
     }
     
+	// Gets the oscillation speed
     getSpeed() {
         return this.speed;
     }
     
+	// Sets the oscillation speed
     setSpeed(speed) {
         this.speed = speed;
     }
     
+	// Draws the oscillation visualisation
     draw() {
         this.t = this.speed * millis();
 
         this.points = [];
 
+		// For each point in the grid...
         for (let i = 0; i < this.n; i++) {
             for (let j = 0; j < this.n; j++) {
+				// Calculate
                 let x2 = (this.l*i+this.l/2-this.l*this.n/2);
                 let y2 = (this.l*j+this.l/2-this.l*this.n/2);
 
